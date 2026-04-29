@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CareerPilot AI — Career Intelligence Platform</title>
+<link rel="icon" type="image/x-icon" href="./assets/favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link rel="stylesheet" href="./frontend/style.css">
+</head>
+<body>
+<div class="shell">
+    
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="logo"><div><img src="./assets/sidebar-logo.png" alt="CareerPilot AI"  style="height: 40px; width: 40px;"></div><span class="logo-txt">CareerPilot <em>AI</em></span></div>
+  <nav class="topnav">
+    <span class="np on" onclick="tab('analyzer',this)">📊 Analyzer</span>
+    <span class="np" onclick="tab('career',this)">🗺️ Paths</span>
+    <span class="np" onclick="tab('interview',this)">🎯 Interview</span>
+    <span class="np" onclick="tab('gap',this)">📈 Skill Gap</span>
+  </nav>
+  <div class="topbar-r">
+    <span class="status-chip" id="statusChip">No Resume</span>
+    <button class="ibtn" onclick="toggleTheme()" id="themeBtn">🌙</button>
+  </div>
+</header>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- SIDEBAR -->
+  <aside class="sb">
+    <div class="scard">
+      <div class="card-hd"><span class="card-ic">📄</span><span class="card-tl">Resume Analyzer</span></div>
+      <div class="dzone" id="dzone">
+        <input type="file" id="fileIn" accept=".pdf,.docx,.doc,.txt">
+        <div class="dzone-in">
+          <div class="dz-em" id="dzEm">📁</div>
+          <div class="dz-lbl">Drop resume or click to browse</div>
+          <div class="dz-sub">PDF · DOCX · TXT</div>
+          <div class="dz-fn" id="dzFn"></div>
+        </div>
+      </div>
+      <button class="btn bp" id="analyzeBtn" onclick="doAnalyze()" disabled>
+        <span class="bi">⚡</span> Analyze Resume
+      </button>
+    </div>
+
+    <div class="scard sc-card" id="scoreCard" style="display:none">
+      <div class="ring-wrap">
+        <svg class="ring-svg" viewBox="0 0 120 120" width="108" height="108">
+          <circle class="ring-track" cx="60" cy="60" r="52"/>
+          <circle class="ring-fill" id="ringFill" cx="60" cy="60" r="52"
+            stroke-dasharray="326.73" stroke-dashoffset="326.73"
+            transform="rotate(-90 60 60)"/>
+        </svg>
+        <div class="ring-center">
+          <span class="sc-num" id="scNum">0</span>
+          <span class="sc-of">/100</span>
+        </div>
+      </div>
+      <div class="sc-lbl" id="scLbl"></div>
+      <div class="sc-grade" id="scGrade"></div>
+    </div>
+
+    <div class="scard" id="matchCard" style="display:none">
+      <div class="card-hd"><span class="card-ic">📊</span><span class="card-tl">Match Strength</span></div>
+      <div class="mlist" id="mlist"></div>
+    </div>
+
+    <div class="rec-card" id="recCard" style="display:none">
+      <div class="rec-ic">💡</div>
+      <div class="rec-tx" id="recTx"></div>
+    </div>
+
+    <button class="btn bs" id="rptBtn" onclick="dlReport()" style="display:none">
+      <span class="bi">📥</span> Download PDF Report
+    </button>
+    <button class="btn bg" onclick="resetAll()">
+      <span class="bi">🔄</span> Reset
+    </button>
+  </aside>
+
+  <!-- CENTER -->
+  <div class="center">
+
+    <!-- ANALYZER TAB -->
+    <div class="tpanel on" id="tp-analyzer">
+      <div class="phd">
+        <h2>Skill Intelligence</h2>
+        <div class="ctabs">
+          <button class="ct on" onclick="setChart('bar',this)">Bar</button>
+          <button class="ct" onclick="setChart('radar',this)">Radar</button>
+          <button class="ct" onclick="setChart('doughnut',this)">Donut</button>
+        </div>
+      </div>
+      <div class="chart-area" id="chartArea">
+        <div class="empty-st">
+          <div class="empty-ic">🧠</div>
+          <div class="empty-tl">Upload your resume to see skill intelligence</div>
+          <div class="empty-sb">We'll analyze your skills, gaps, and market fit</div>
+        </div>
+      </div>
+      <canvas id="skillChart" style="display:none;max-height:240px"></canvas>
+      <div class="skills-grid" id="skillsGrid" style="display:none">
+        <div class="skills-col">
+          <div class="scol-hd fh">✅ Skills Detected</div>
+          <div class="tags-scroll" id="tagsFound"><div class="tags-wrap"></div></div>
+        </div>
+        <div class="skills-col">
+          <div class="scol-hd mh">🔴 Skills to Add</div>
+          <div class="tags-scroll" id="tagsMissing"><div class="tags-wrap"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CAREER TAB -->
+    <div class="tpanel" id="tp-career">
+      <div class="phd"><h2>Career Path Explorer</h2></div>
+      <div class="paths-grid">
+        <div class="pcard" onclick="toChat('Give me a detailed AI/ML Engineering career roadmap — skills to learn, timeline, salary in Pakistan and remote, top companies hiring.')"><div class="pe">🤖</div><div class="pn">AI / ML Engineering</div><div class="psal">PKR 200K–800K · $50–200/hr remote</div><div class="pbadge hot">🔥 Hottest 2024</div></div>
+        <div class="pcard" onclick="toChat('Give me a detailed Full-Stack Development career roadmap — React, Node/Python, timeline, salary.')"><div class="pe">💻</div><div class="pn">Full-Stack Development</div><div class="psal">PKR 150K–500K · $40–120/hr remote</div><div class="pbadge">Most Jobs</div></div>
+        <div class="pcard" onclick="toChat('Give me a detailed Data Science career roadmap — tools, timeline, salary, certifications.')"><div class="pe">📊</div><div class="pn">Data Science</div><div class="psal">PKR 120K–400K · $40–90/hr remote</div><div class="pbadge">High Growth</div></div>
+        <div class="pcard" onclick="toChat('Give me a Cloud and DevOps Engineering career roadmap — AWS, Docker, Kubernetes, timeline, salary.')"><div class="pe">☁️</div><div class="pn">Cloud / DevOps</div><div class="psal">PKR 150K–600K · $50–130/hr remote</div><div class="pbadge">Fast Growing</div></div>
+        <div class="pcard" onclick="toChat('Give me a Mobile App Development career roadmap — Flutter, React Native, timeline, salary.')"><div class="pe">📱</div><div class="pn">Mobile Development</div><div class="psal">PKR 100K–350K · $35–100/hr remote</div><div class="pbadge">Scalable</div></div>
+        <div class="pcard" onclick="toChat('Give me a Cybersecurity career roadmap — ethical hacking, certifications, timeline, salary.')"><div class="pe">🔐</div><div class="pn">Cybersecurity</div><div class="psal">PKR 150K–700K · $60–180/hr remote</div><div class="pbadge">Critical Shortage</div></div>
+      </div>
+    </div>
+
+    <!-- INTERVIEW TAB -->
+    <div class="tpanel" id="tp-interview">
+      <div class="phd"><h2>Interview Preparation</h2><span class="psub">Click any question for an AI model answer</span></div>
+      <div class="int-sections">
+        <div><div class="int-sec-title itc">⚙️ Technical Questions</div>
+          <div class="qlist">
+            <div class="qcard" onclick="askQ(this)"><span class="qtag tc">Technical</span><div class="qtxt">Explain the difference between supervised and unsupervised machine learning with real examples.</div></div>
+            <div class="qcard" onclick="askQ(this)"><span class="qtag tc">Technical</span><div class="qtxt">Design a REST API for a social media platform — walk me through endpoints, auth, and data models.</div></div>
+            <div class="qcard" onclick="askQ(this)"><span class="qtag tc">Technical</span><div class="qtxt">What is the difference between SQL and NoSQL databases? When would you choose each?</div></div>
+            <div class="qcard" onclick="askQ(this)"><span class="qtag tc">Technical</span><div class="qtxt">Explain Python's async/await and when you'd use it over threading or multiprocessing.</div></div>
+            <div class="qcard" onclick="askQ(this)"><span class="qtag tc">Technical</span><div class="qtxt">Explain React hooks — useState, useEffect, useCallback — with concrete examples.</div></div>
+          </div>
+        </div>
+        <div><div class="int-sec-title ib">🧠 Behavioral (STAR Method)</div>
+          <div class="qlist">
+            <div class="qcard" onclick="askQ(this)"><span class="qtag bc">Behavioral</span><div class="qtxt">Tell me about a time you faced a major technical challenge. How did you resolve it?</div></div>
+            <div class="qcard" onclick="askQ(this)"><span class="qtag bc">Behavioral</span><div class="qtxt">Describe the project you're most proud of — your specific role and the measurable impact.</div></div>
+            <div class="qcard" onclick="askQ(this)"><span class="qtag bc">Behavioral</span><div class="qtxt">How do you handle disagreements with teammates? Give a specific example.</div></div>
+          </div>
+        </div>
+        <div><div class="int-sec-title is">🏗️ System Design</div>
+          <div class="qlist">
+            <div class="qcard" onclick="askQ(this)"><span class="qtag sc">System Design</span><div class="qtxt">Design a URL shortener like bit.ly handling 1M requests/day — storage, scalability, analytics.</div></div>
+            <div class="qcard" onclick="askQ(this)"><span class="qtag sc">System Design</span><div class="qtxt">How would you build a real-time chat app handling 500K concurrent users?</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GAP TAB -->
+    <div class="tpanel" id="tp-gap">
+      <div class="phd"><h2>Skill Gap Roadmap</h2></div>
+      <div id="gapContent">
+        <div class="empty-st" style="padding:40px 20px">
+          <div class="empty-ic">🗺️</div>
+          <div class="empty-tl">Upload your resume to get your personalized roadmap</div>
+          <div class="empty-sb">We'll identify gaps and build a step-by-step learning plan</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /center -->
+
+  <!-- CHAT -->
+  <div class="chat">
+    <div class="chat-hd">
+      <div class="ch-dot"></div>
+      <div><div class="ch-name">CareerPilot AI</div><div class="ch-sub">Real AI · Career Coach · Resume Expert</div></div>
+      <div class="ch-ctx" id="chCtx" style="display:none">📄 Resume Loaded</div>
+    </div>
+
+    <div class="chat-msgs" id="chatMsgs">
+      <div class="welcome" id="welcome">
+        <div class="w-av">🚀</div>
+        <div class="w-tl">Welcome to CareerPilot AI</div>
+        <div class="w-sb">Your AI career advisor. Upload your resume or ask me anything!</div>
+        <div class="chips">
+          <div class="chip" onclick="chip(this)">Improve my CV</div>
+          <div class="chip" onclick="chip(this)">Career path for my skills</div>
+          <div class="chip" onclick="chip(this)">Start mock interview</div>
+          <div class="chip" onclick="chip(this)">Salary negotiation tips</div>
+          <div class="chip" onclick="chip(this)">Write me a cover letter</div>
+          <div class="chip" onclick="chip(this)">LinkedIn optimization</div>
+        </div>
+      </div>
+      <div class="typing" id="typingInd">
+        <div class="ty-av">🤖</div>
+        <div class="ty-bub"><div class="tyd"></div><div class="tyd"></div><div class="tyd"></div></div>
+        <span class="ty-lbl">CareerPilot AI is thinking…</span>
+      </div>
+    </div>
+
+    <div class="cinput-wrap">
+      <div class="cinput-box">
+        <textarea class="chat-ta" id="chatTa" placeholder="Ask about career, salary, interviews, CV…" ></textarea>
+        <button class="send-btn" id="sendBtn" onclick="sendChat()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+      <div class="cfooter">Enter to send · Shift+Enter for new line</div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+</div><!-- /shell -->
+
+<div class="toast" id="toast"></div>
+
+<script src="./frontend/script.js"></script>
+</body>
+</html>
