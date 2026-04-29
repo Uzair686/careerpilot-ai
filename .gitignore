@@ -1,0 +1,57 @@
+# ── Python ────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+.Python
+
+# ── Virtual Environments ──────────────────────────
+venv/
+env/
+ENV/
+.venv/
+.env/
+
+# ── Environment Variables / Secrets ───────────────
+.env
+.env.local
+.env.production
+*.env
+secrets.py
+config_local.py
+
+# ── Flask ─────────────────────────────────────────
+instance/
+.webassets-cache
+flask_session/
+
+# ── IDE & Editor ──────────────────────────────────
+.vscode/settings.json
+.vscode/launch.json
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ── Logs & Temp ───────────────────────────────────
+*.log
+*.tmp
+logs/
+tmp/
+
+# ── Uploads (user data — never commit) ────────────
+uploads/
+*.pdf
+*.docx
+*.doc
+
+# ── Build outputs ─────────────────────────────────
+dist/
+build/
+*.egg-info/
+
+# ── Node (if any frontend tooling added later) ────
+node_modules/
+npm-debug.log
